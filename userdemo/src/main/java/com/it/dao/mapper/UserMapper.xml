@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--接口的包名是com.abc.dao,接口名是NameMapper.java，
+mapper.xml的namespace应该是com.abc.dao.NameMapper-->
+    <mapper namespace="com.it.dao.UserDao">
+    <!--resultMap对应的是表与实体类的映射  - type 数据库表对应的实体类，别名或完整类名都可以-->
+   <!-- <resultMap id="UserMap" type="com.it.entity.User">
+         &lt;!&ndash; 结果集的主键&ndash;&gt;
+        <id column="id" property="id" jdbcType="Integer"/>
+        &lt;!&ndash; 普通列的&ndash;&gt;
+        <result column="name" property="name" jdbcType="java.lang.String"/>
+        <result column="birthday" property="birthday" jdbcType="Date"/>
+        <result column="address" property="address" jdbcType="java.lang.String"/>
+    </resultMap>-->
+
+
+    <!--根据用户名查询用户-->
+    <!--<select id="queryByName" parameterType="String" resultType="account">-->
+    <!--select	* from tb_customer where username =#{username}-->
+    <!--</select>-->
+    <!--<select id="queryByName" parameterType="String" resultType="account">
+        SELECT <include refid="cloums"/>
+        from t_user_info where f_mobile_phone=#{fmobilephone}
+    </select>
+    -->
+
+    <sql id="columns" >
+        select * from user
+       </sql>
+    <!--添加用户信息parameterType 输入型    resultType 输出型-->
+    <!--<insert id="addUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.it.entity.User" >-->
+      <!--insert into user(name,birthday,address) values(#{name},#{birthday},#{address})-->
+    <!--</insert>-->
+    <insert id="addUser" parameterType="com.it.entity.User">
+        insert  into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="birthday != null">birthday,</if>
+             <if test="address != null">address</if>
+        </trim>
+
+<!-- 输入控制层-->
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="address != null">#{address}</if>
+        </trim>
+</insert>
+
+
+    <!-- 查询所有用户信息     <select id="selectAll"    resultType="com.it.entity.User">-->
+    <select id="selectAll"   resultType="com.it.entity.User" >
+    <include refid="columns" />
+       <!-- <trim prefix=","></trim>-->
+        <where>
+            <if test="id!=null">id=#{id}</if>
+            <if test="name!=null">OR name=#{name}</if>
+            <if test="birthday!=null">OR  birthday=#{birthday}</if>
+            <if test="address!=null">OR address=#{address}</if>
+       </where>
+    </select>
+
+
+    <!--删除用户信息-->
+    <delete id="delUser">
+        delete from user where id= #{id};
+    </delete>
+
+<!-- 修改用户信息-->
+    <update id="udpUser" parameterType="com.it.entity.User" >
+        update user set
+
+        <trim suffixOverrides=",">
+            <if test="birthday!=null">birthday=#{birthday},</if>
+            <if test="address!=null">address=#{address},</if>
+            <if test="name!=null">name=#{name}</if>
+        </trim>
+             where id=#{id}
+    </update>
+
+</mapper>
+
